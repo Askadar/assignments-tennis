@@ -5,7 +5,10 @@
 	"source": "src/index.ts",
 	"license": "MIT",
 	"scripts": {
-		"dev": "jest --watch"
+		"dev": "jest --watch",
+		"test": "jest",
+		"build": "parcel build",
+		"start": "node dist"
 	},
 	"devDependencies": {
 		"@types/jest": "^27.4.1",
