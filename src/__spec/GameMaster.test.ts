@@ -23,7 +23,6 @@ describe('GameMaster', () => {
 			expect(progress$).toBeCalledTimes(1)
 		})
 
-		// Just to prevent need of having infinite loops since there doesn't seem to be any way to break a tie untill one player scored 2 points more
 		it('should progress(forPlayer) game when argument passed', () => {
 			const progress$ = jest.spyOn(master.game, 'progress')
 
@@ -56,18 +55,6 @@ describe('GameMaster', () => {
 			expect(executeTurn$).not.toHaveLastReturnedWith(false)
 			expect(executeTurn$.mock.calls.length).toBeGreaterThan(0)
 		})
-
-		it('should return formatted gameStats', () => {
-			const gameResult = master.runGame()
-
-			expect(gameResult).toMatch(/P1 - P2\n?\d{1,2} - \d{1,2}\n?P\d{1}  won/)
-		})
-
-		it('should return formatted gameStats for unfinished game', () => {
-			const gameResult = master.runGame(3)
-
-			expect(gameResult).toMatch(/P1 - P2\n?\d{1,2} - \d{1,2}/)
-		})
 	})
 
 	describe('gameStats', () => {
@@ -79,7 +66,7 @@ describe('GameMaster', () => {
 			})
 		})
 
-		it('should return inP}ogress status of the game', () => {
+		it('should return inProgress status of the game', () => {
 			master.executeTurn(0)
 			master.executeTurn(0)
 			master.executeTurn(1)
@@ -91,7 +78,7 @@ describe('GameMaster', () => {
 			})
 		})
 
-		it('should return inP}ogress status of the game', () => {
+		it('should return completed status of the game with winner', () => {
 			master.executeTurn(1)
 			master.executeTurn(1)
 			master.executeTurn(0)
@@ -104,6 +91,36 @@ describe('GameMaster', () => {
 				formattedScore: '30 - 40',
 				winner: master.players[1],
 			})
+		})
+
+		it('should return completed status of the game with tie', () => {
+			;[0, 1, 0, 1, 0, 1, 0, 1].forEach((forPlayer) => master.executeTurn(forPlayer))
+
+			expect(master.gameStats).toStrictEqual({
+				status: GameStatus.COMPLETED,
+				formattedScore: '40 - 40',
+				winner: null,
+			})
+		})
+	})
+
+	describe('formattedGameStats', () => {
+		it('should return formatted gameStats when one player wins', () => {
+			;[0, 0, 0, 0].forEach((forPlayer) => master.executeTurn(forPlayer))
+
+			expect(master.formattedGameStats).toMatch(/P1 - P2\n?\d{1,2} - \d{1,2}\n?P\d{1}  won/)
+		})
+
+		it('should return formatted gameStats for tied game', () => {
+			;[1, 0, 1, 0, 1, 0, 1, 0].forEach((forPlayer) => master.executeTurn(forPlayer))
+
+			expect(master.formattedGameStats).toMatch(/P1 - P2\n?\d{1,2} - \d{1,2}\n?tied/)
+		})
+
+		it('should return formatted gameStats for unfinished game', () => {
+			const gameResult = master.runGame(3)
+
+			expect(gameResult).toMatch(/P1 - P2\n?\d{1,2} - \d{1,2}/)
 		})
 	})
 })

@@ -38,11 +38,9 @@ class GameMaster {
 		const stats = this.gameStats
 		const winnerIndex = this.players.findIndex((p) => p === stats.winner)
 
-		return [
-			`P1 - P2`,
-			stats.formattedScore,
-			stats.status === GameStatus.COMPLETED ? `P${winnerIndex + 1}  won` : null,
-		]
+		const result = winnerIndex >= 0 ? `P${winnerIndex + 1}  won` : `tied`
+
+		return [`P1 - P2`, stats.formattedScore, stats.status === GameStatus.COMPLETED ? result : null]
 			.filter(Boolean)
 			.join('\n')
 	}
