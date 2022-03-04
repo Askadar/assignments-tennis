@@ -63,6 +63,18 @@ describe('Game', () => {
 			expect(game.winner).toBe(game.players[1])
 		})
 
+		it('should complete when players tie', () => {
+			// Enter "deuce" -> 40 - 40
+			;[0, 1, 0, 1, 0, 1].forEach((forPlayer) => game.progress(forPlayer))
+
+			expect(game.completed).toBe(false)
+
+			game.progress(1)
+			game.progress(0)
+			expect(game.completed).toBe(true)
+			expect(game.winner).toBe(null)
+		})
+
 		it('should return false after game is completed', () => {
 			;[0, 0, 0].forEach((forPlayer) => game.progress(forPlayer))
 

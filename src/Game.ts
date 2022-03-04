@@ -21,28 +21,33 @@ class Game {
 			.join(' - ')
 	}
 
+	private get _scoreDifference() {
+		return Math.abs(this.scores[0] - this.scores[1])
+	}
+
 	public get winner() {
 		if (!this.completed) return null
 
+		if (this._scoreDifference === 0) return null
 		if (this.scores[0] > this.scores[1]) return this.players[0]
 
 		return this.players[1]
 	}
 
 	public get completed() {
-		const scoreDifference = Math.abs(this.scores[0] - this.scores[1])
 		const eitherHasEnoughPoints = this.scores.some((score) => score >= 4)
 
-		if (scoreDifference >= 2 && eitherHasEnoughPoints) return true
+		if (this._scoreDifference >= 2 && eitherHasEnoughPoints) return true
+		if (this._scoreDifference === 0 && this.scores[0] === 4) return true
 
 		return false
 	}
 
-	constructor(players: [Player, Player]) {
+	public constructor(players: [Player, Player]) {
 		this._players = players
 	}
 
-	progress(forPlayer?: number): boolean {
+	public progress(forPlayer?: number): boolean {
 		if (this.completed) return false
 
 		const playerScored = forPlayer ?? Math.round(Math.random() * (this.players.length - 1))
